@@ -1531,8 +1531,18 @@ public class ZWaveNode {
         timerTask = new WakeupTimerTask();
 
         logger.debug("NODE {}: Start sleep timer with {}ms interval", getNodeId(), sleepDelay);
+        // Start the timer
+        // If the initialisation is complete, then use a short delay,
+        // Otherwise use a longer delay...
+        int timerDelay;
+        if (isInitializationComplete()) {
+            timerDelay = sleepDelay;
+        } else {
+            timerDelay = 30000;
+        }
+        logger.debug("NODE {}: Start sleep timer at {}ms", getNodeId(), timerDelay);
 
-        timer.schedule(timerTask, sleepDelay, sleepDelay);
+        timer.schedule(timerTask, timerDelay / 2, timerDelay / 2);
     }
 
     private synchronized void resetSleepTimer() {
